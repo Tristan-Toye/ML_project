@@ -12,7 +12,7 @@ def main():
   
 
   max_game_iterations:int = 10000
-  game_name = "Battle_of_the_sexes"
+  game_name = "subsidy_game"
   learning_name = "Q_learning"
   graph = Graph()
 
