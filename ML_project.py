@@ -11,9 +11,9 @@ def main():
   legal_learning_algos = ["espilon_greedy", "Q_learning", "lenient_Q_learning", "frequency_adjusted_Q_learning", "lenient_frequency_adjusted_Q_learning"]
   
 
-  max_game_iterations:int = 10000
+  max_game_iterations:int = 100000
   game_name = "subsidy_game"
-  learning_name = "Q_learning"
+  learning_name = "lenient_Q_learning"
   graph = Graph()
 
   # epsilon_greedy
@@ -30,15 +30,19 @@ def main():
         [[0.2, 0.8], [0.8, 0.2]],
         [[0.8, 0.2], [0.2, 0.8]]
     ]
-  alpha = 5*10**(-4)
+  alpha = 5*10**(-5)
   gamma = 0.9
   tau = 2.5
 
   def temperature_reduction_function(count:int, tau):
-    return tau
+    if count == 2000:
+      return 0.8
+    else:
+      return tau
+
 
   #lenient_Q_learning
-  kappa = 1
+  kappa = 5
 
   #if no reduction --> converts to 12/12 in subsidy (kappa  == 4)
   def lenience_reduction_function(count:int, kappa:int):
@@ -93,6 +97,20 @@ def main():
                                     beta= beta
                                   )     
                             )
+      elif learning_name == "lenient_frequency_adjusted_Q_learning":
+        Agents_list.append(Agent(
+                                    game = game,
+                                    learning_string=learning_name,
+                                    initial_Q=initial_Q[index],
+                                    alpha=alpha,
+                                    gamma=gamma,
+                                    tau=tau,
+                                    beta= beta,
+                                    temperature_reduction_function=temperature_reduction_function,
+                                    kappa=kappa,
+                                    lenience_reduction_function=lenience_reduction_function
+                                  )     
+                            )
       elif learning_name == "epsilon_greedy":
         Agents_list.append(Agent(
                                     game = game,
@@ -127,7 +145,8 @@ def main():
     print(Agents_list[1].latest_error())
 
     if "lenient" in learning_name:
-      graph.render_lenient_plot(game, Agents_list, alpha= alpha, tau = tau, kappa = kappa, normalise= normalise_vector_plot)
+      #graph.render_lenient_plot(game, Agents_list, alpha= alpha, tau = tau, kappa = kappa, normalise= normalise_vector_plot)
+      graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, learning_name, kappa = kappa, normalise=normalise_vector_plot)
     else:
       if game_name != "rock_paper_scissors":
         graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, learning_name, normalise=normalise_vector_plot)

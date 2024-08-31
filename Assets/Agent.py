@@ -53,15 +53,17 @@ class Agent():
         self.__temperature_reduction_function = temperature_reduction_function if temperature_reduction_function is not None else lambda count,tau: tau
       else:
         assert(beta is not None)
-        tmp_tau, tmp_beta = self.__compute_optimal_parameters_for_FAQL(game, beta, tau, gamma)
-        tmp_tau_list = [tau, tau, tmp_tau]
-        tmp_beta_list = [beta, tmp_beta, beta]
-        print(f"1. keep given values tau = {tau} and beta = {beta}")
-        print(f"2. compute optimal beta = {tmp_beta} with tau = {tau}")
-        print(f"3. compute optimal tau = {tmp_tau} with beta = {beta}")
-        index = int(input("Give your choice: "))
-        self.__tau = tmp_tau_list[index-1]
-        self.__beta = tmp_beta_list[index-1]
+        # tmp_tau, tmp_beta = self.__compute_optimal_parameters_for_FAQL(game, beta, tau, gamma)
+        # tmp_tau_list = [tau, tau, tmp_tau]
+        # tmp_beta_list = [beta, tmp_beta, beta]
+        # print(f"1. keep given values tau = {tau} and beta = {beta}")
+        # print(f"2. compute optimal beta = {tmp_beta} with tau = {tau}")
+        # print(f"3. compute optimal tau = {tmp_tau} with beta = {beta}")
+        # index = int(input("Give your choice: "))
+        # self.__tau = tmp_tau_list[index-1]
+        # self.__beta = tmp_beta_list[index-1]
+        self.__tau = tau
+        self.__beta = beta
       if "lenient" in learning_string:
         assert(kappa is not None)
         self.__kappa = kappa if kappa >=1 else 1
