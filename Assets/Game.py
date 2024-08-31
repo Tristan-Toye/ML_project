@@ -19,8 +19,14 @@ class Game():
   __battle_of_the_sexes_bi_matrix = [[[3,2],[0,0]],
                                      [[0,0],[2,3]]]
   
+ 
+  __prisoners_dilemma_bi_matrix = [[[0.75, 0.75], [0, 1]],
+                                   [[1, 0], [0.25, 0.25]]]
+  
+  '''
   __prisoners_dilemma_bi_matrix = [[[-1,-1], [-4, 0]],
                                    [[0, -4], [-3, -3]]]
+  '''
   
   def __init__(self, game_string: str) -> None:
     self.__game_name = game_string

@@ -11,8 +11,8 @@ def main():
   legal_learning_algos = ["espilon_greedy", "Q_learning", "lenient_Q_learning", "frequency_adjusted_Q_learning", "lenient_frequency_adjusted_Q_learning"]
   
 
-  max_game_iterations:int = 20000
-  game_name = "Battle_of_the_sexes"
+  max_game_iterations:int = 1000000
+  game_name = "prisoners_dilemma"
   learning_name = "Q_learning"
   graph = Graph()
 
@@ -26,25 +26,24 @@ def main():
   initial_Q = [[0.8, 0.2],[0.6, 0.4]] #also initial prob distribution (list gets normalised auto for this, not for Q)
   initial_Q_values_list = [
         [[0.5, 0.5], [0.5, 0.5]],
-        [[0.8, 0.2], [0.8, 0.2]],
-        [[0.2, 0.8], [0.2, 0.8]],
-        [[0.2, 0.8], [0.8, 0.2]],
-        [[0.8, 0.2], [0.2, 0.8]]
+        [[0.9, 0.8], [0.9, 0.8]],
+        [[0.4, 0.5], [0.4, 0.5]],
+        [[0.8, 0.9], [0.9, 0.8]],
+        [[0.5, 0.4], [0.4, 0.5]]
     ]
-
-  alpha = 5*10**(-5)
+  alpha = 5*10**(-7)
   gamma = 0.9
-  tau = 2.5
+  tau = 0.1
 
   def temperature_reduction_function(count:int, tau):
-    if count == 2000:
-      return 0.8
+    if count == 800000:
+      return 0.01
     else:
       return tau
 
 
   #lenient_Q_learning
-  kappa = 5
+  kappa = 1
 
   #if no reduction --> converts to 12/12 in subsidy (kappa  == 4)
   def lenience_reduction_function(count:int, kappa:int):

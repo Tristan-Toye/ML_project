@@ -59,6 +59,8 @@ class Graph:
         A, B = game.get_bi_matrix_seperated()
         N = 20
         x, y = np.meshgrid(np.linspace(0, 1, N + 2)[1:-1], np.linspace(0, 1, N +2)[1:-1], indexing= 'xy')
+        #x, y = np.meshgrid(np.linspace(0, 1, N), np.linspace(0, 1, N), indexing= 'xy')
+
 
         dx = np.zeros_like(x)
         dy = np.zeros_like(y)
@@ -258,8 +260,9 @@ class Graph:
                         xaxis_title='Player 1 Action 0 Probability',
                         yaxis_title='Player 2 Action 0 Probability',
                         legend_title='Traces',
-                        xaxis=dict(range=[0, 1]),  # Set X axis range between 0 and 1
-                        yaxis=dict(range=[0, 1]))   # Set Y axis range between 0 and 1)
+                        xaxis=dict(range=[0, 1]),  
+                        yaxis=dict(range=[0, 1]) 
+                        )
 
         # Show the plot
         fig.show()
