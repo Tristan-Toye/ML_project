@@ -12,8 +12,8 @@ def main():
   
 
   max_game_iterations:int = 10000
-  game_name = "subsidy_game"
-  learning_name = "epsilon_greedy"
+  game_name = "Battle_of_the_sexes"
+  learning_name = "Q_learning"
   graph = Graph()
 
   # epsilon_greedy
@@ -23,7 +23,13 @@ def main():
   # Q-learning
   # Conclusion: for both Q-learning and Lenient Q_learning holds true that the model dynamics (dx , dy) in distribution (x , y) are linear dependent on the value of their respective distribution 
   # aka dx is linear dependent on x only, dx is linear dependent on y only (assumin static model ofc)
-  initial_Q = [[0.2, 0.8],[0.6, 0.4]] #also initial prob distribution (list gets normalised auto for this, not for Q)
+  initial_Q = [[0.8, 0.2],[0.6, 0.4]] #also initial prob distribution (list gets normalised auto for this, not for Q)
+  initial_Q_values_list = [
+        [[0.5, 0.5], [0.5, 0.5]],
+        [[0.8, 0.2], [0.8, 0.2]],
+        [[0.2, 0.8], [0.8, 0.2]],
+        [[0.8, 0.2], [0.2, 0.8]]
+    ]
   alpha = 5*10**(-4)
   gamma = 0.9
   tau = 0.1
@@ -43,68 +49,72 @@ def main():
 
 
   normalise_vector_plot = True
+  all_traces = []
 
-
-  print("Creating game: " + game_name)
-  game = Game(game_name)
-  Agents_list: list[Agent] = list()
-  assert(game.num_Agents() == len(initial_Q))
-  for index in range(game.num_Agents()):
-    if learning_name == "Q_learning":
-      Agents_list.append(Agent(
-                                  game = game,
-                                  learning_string=learning_name,
-                                  initial_Q=initial_Q[index],
-                                  alpha=alpha,
-                                  gamma=gamma,
-                                  tau=tau,
-                                  temperature_reduction_function=temperature_reduction_function
+  for idx, initial_Q in enumerate(initial_Q_values_list):
+    print(f"Running simulation {idx + 1} with initial Q-values: {initial_Q}")
+    print("Creating game: " + game_name)
+    game = Game(game_name)
+    Agents_list: list[Agent] = list()
+    assert(game.num_Agents() == len(initial_Q))
+    for index in range(game.num_Agents()):
+      if learning_name == "Q_learning":
+        Agents_list.append(Agent(
+                                    game = game,
+                                    learning_string=learning_name,
+                                    initial_Q=initial_Q[index],
+                                    alpha=alpha,
+                                    gamma=gamma,
+                                    tau=tau,
+                                    temperature_reduction_function=temperature_reduction_function
+                                    )
+                            )
+      elif learning_name == "lenient_Q_learning":
+        Agents_list.append(Agent(
+                                    game = game,
+                                    learning_string=learning_name,
+                                    initial_Q=initial_Q[index],
+                                    alpha=alpha,
+                                    gamma=gamma,
+                                    tau=tau,
+                                    temperature_reduction_function=temperature_reduction_function,
+                                    kappa=kappa,
+                                    lenience_reduction_function=lenience_reduction_function
+                                    )
+                            )
+      elif learning_name == "frequency_adjusted_Q_learning":
+        Agents_list.append(Agent(
+                                    game = game,
+                                    learning_string=learning_name,
+                                    initial_Q=initial_Q[index],
+                                    alpha=alpha,
+                                    gamma=gamma,
+                                    tau=tau,
+                                    beta= beta
+                                  )     
+                            )
+      elif learning_name == "epsilon_greedy":
+        Agents_list.append(Agent(
+                                    game = game,
+                                    learning_string=learning_name,
+                                    epsilon= epsilon,
+                                    
                                   )
-                          )
-    elif learning_name == "lenient_Q_learning":
-      Agents_list.append(Agent(
-                                  game = game,
-                                  learning_string=learning_name,
-                                  initial_Q=initial_Q[index],
-                                  alpha=alpha,
-                                  gamma=gamma,
-                                  tau=tau,
-                                  temperature_reduction_function=temperature_reduction_function,
-                                  kappa=kappa,
-                                  lenience_reduction_function=lenience_reduction_function
-                                  )
-                          )
-    elif learning_name == "frequency_adjusted_Q_learning":
-      Agents_list.append(Agent(
-                                  game = game,
-                                  learning_string=learning_name,
-                                  initial_Q=initial_Q[index],
-                                  alpha=alpha,
-                                  gamma=gamma,
-                                  tau=tau,
-                                  beta= beta
-                                )     
-                          )
-    elif learning_name == "epsilon_greedy":
-      Agents_list.append(Agent(
-                                  game = game,
-                                  learning_string=learning_name,
-                                  epsilon= epsilon,
-                                  
-                                )
-                          )
-    else: raise Exception("No such learning implemented")
+                            )
+      else: raise Exception("No such learning implemented")
 
-  count = 0
-  # and not all([Agent.done_learning() for Agent in Agents_list])
-  while count < max_game_iterations:
-    
-    actions = [Agent.get_action() for Agent in Agents_list]
-    rewards = game.get_reward(actions)
-    [Agents_list[index].learn(reward) for index, reward in enumerate(rewards)]
-    
-    count+=1
-    print(f"Played Games: {count}")
+    count = 0
+    # and not all([Agent.done_learning() for Agent in Agents_list])
+    while count < max_game_iterations:
+      actions = [Agent.get_action() for Agent in Agents_list]
+      rewards = game.get_reward(actions)
+      [Agents_list[index].learn(reward) for index, reward in enumerate(rewards)]
+      
+      count+=1
+      print(f"Played Games: {count}")
+
+    traces = [agent.get_distributions_evolution() for agent in Agents_list]
+    all_traces.append(traces)
 
   if "Q_learning" in learning_name:
     print("Agent 1:")
@@ -120,7 +130,9 @@ def main():
       graph.render_lenient_plot(game, Agents_list, alpha= alpha, tau = tau, kappa = kappa, normalise= normalise_vector_plot)
     else:
       if game_name != "rock_paper_scissors":
-        graph.render_2_actions_graph(game,Agents_list, normalise=normalise_vector_plot)
+        graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, learning_name, normalise=normalise_vector_plot)
+        #graph.render_combined_2_actions_graph(game, all_traces, normalise=normalise_vector_plot)
+        #graph.render_2_actions_graph(game, Agents_list, normalise=normalise_vector_plot)
       else:
         graph.render_3_actions_graph(game, Agents_list, normalise = normalise_vector_plot)
   elif learning_name == "epsilon_greedy":
@@ -136,6 +148,5 @@ def main():
   
 if __name__ == "__main__":
   main()
-
 
 
