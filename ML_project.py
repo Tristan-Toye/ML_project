@@ -11,9 +11,9 @@ def main():
   legal_learning_algos = ["espilon_greedy", "Q_learning", "lenient_Q_learning", "frequency_adjusted_Q_learning", "lenient_frequency_adjusted_Q_learning"]
   
 
-  max_game_iterations:int = 100000
-  game_name = "subsidy_game"
-  learning_name = "lenient_frequency_adjusted_Q_learning"
+  max_game_iterations:int = 20000
+  game_name = "Battle_of_the_sexes"
+  learning_name = "Q_learning"
   graph = Graph()
 
   # epsilon_greedy
@@ -27,6 +27,7 @@ def main():
   initial_Q_values_list = [
         [[0.5, 0.5], [0.5, 0.5]],
         [[0.8, 0.2], [0.8, 0.2]],
+        [[0.2, 0.8], [0.2, 0.8]],
         [[0.2, 0.8], [0.8, 0.2]],
         [[0.8, 0.2], [0.2, 0.8]]
     ]
@@ -53,7 +54,7 @@ def main():
   beta = 1
 
 
-  normalise_vector_plot = True
+  normalise_vector_plot = False
   all_traces = []
 
   for idx, initial_Q in enumerate(initial_Q_values_list):
@@ -150,7 +151,7 @@ def main():
       graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, learning_name, kappa = kappa, normalise=normalise_vector_plot)
     else:
       if game_name != "rock_paper_scissors":
-        graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, learning_name, normalise=normalise_vector_plot)
+        graph.render_combined_2_actions_graph(game, all_traces, initial_Q_values_list, alpha, gamma, tau, kappa, learning_name, normalise=normalise_vector_plot)
         #graph.render_combined_2_actions_graph(game, all_traces, normalise=normalise_vector_plot)
         #graph.render_2_actions_graph(game, Agents_list, normalise=normalise_vector_plot)
       else:

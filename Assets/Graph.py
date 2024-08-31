@@ -220,11 +220,11 @@ class Graph:
         fig.show()
 
     @staticmethod
-    def render_combined_2_actions_graph(game: Game, all_traces: list[list[list[list]]], initial_Q_values_list, alpha, gamma, tau, learning_name, kappa = 1, normalise: bool = True):
+    def render_combined_2_actions_graph(game: Game, all_traces: list[list[list[list]]], initial_Q_values_list, alpha, gamma, tau, kappa,learning_name, normalise: bool = True):
         # kappa = 1 -> Q learning
-        fig = Graph.compute_vector_field(game, alpha, tau , kappa=kappa)
+        fig = Graph.compute_vector_field(game, alpha, tau , kappa)
 
-        colors = ['red', 'blue', 'green', 'yellow']
+        colors = ['red', 'blue', 'green', 'yellow', 'purple']
 
         for idx, traces in enumerate(all_traces):
             x_trace1 = np.array([freq0[0] for freq0 in traces[0]])
