@@ -157,7 +157,7 @@ class Agent():
     #policy updating
     distribution = deepcopy(self.__previous_distributions[-1])
     for prob_index in range(len(self.__previous_distributions[-1])):
-      distribution[prob_index] = (np.exp(self.__Q[prob_index]) / self.__tau) / sum([np.exp(Q_value) / self.__tau for  Q_value in self.__Q])
+      distribution[prob_index] = (np.exp(self.__Q[prob_index] / self.__tau)) / sum([np.exp(Q_value / self.__tau) for  Q_value in self.__Q])
     self.__previous_distributions.append(deepcopy(distribution))
     self.__index_latest_action = -1
 
