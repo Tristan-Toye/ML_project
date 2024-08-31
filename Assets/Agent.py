@@ -40,7 +40,7 @@ class Agent():
       self.__previous_distributions = list()
       initial_distribution = list()
       for prob_index in range(len(game.legal_actions())):
-        initial_distribution.append((np.exp(initial_Q[prob_index]) / tau) / sum([np.exp(Q_value) / tau for  Q_value in initial_Q]))
+        initial_distribution.append((np.exp(initial_Q[prob_index] / tau)) / sum([np.exp(Q_value / tau) for  Q_value in initial_Q]))
       self.__previous_distributions.append(initial_distribution)
 
       self.__Q = deepcopy(initial_Q)
@@ -81,8 +81,8 @@ class Agent():
     pseudo_Q_list = [min_reward]
     while len(pseudo_Q_list) < len(game.legal_actions()):
       pseudo_Q_list.append(max_reward)
-    beta = 0.9 * (np.exp(pseudo_Q_list[0]) / original_tau) / sum([np.exp(Q_value) / original_tau for  Q_value in pseudo_Q_list])
-    tau = 1.1 * pseudo_Q_list[0] / (math.log10(1/original_beta) - math.log10(sum([np.exp(Q_value) / original_tau for  Q_value in pseudo_Q_list])))
+    beta = 0.9 * (np.exp(pseudo_Q_list[0] / original_tau)) / sum([np.exp(Q_value / original_tau) for  Q_value in pseudo_Q_list])
+    tau = 1.1 * pseudo_Q_list[0] / (math.log10(1/original_beta) - math.log10(sum([np.exp(Q_value / original_tau) for  Q_value in pseudo_Q_list])))
     return beta, tau
   
   @staticmethod
