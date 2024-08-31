@@ -32,7 +32,7 @@ def main():
     ]
   alpha = 5*10**(-4)
   gamma = 0.9
-  tau = 0.1
+  tau = 2.5
 
   def temperature_reduction_function(count:int, tau):
     return tau

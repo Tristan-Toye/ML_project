@@ -309,6 +309,24 @@ class Graph:
             label = f"Trace {idx+1}: P1={initial_Q_values_list[idx][0]}, P2={initial_Q_values_list[idx][1]}"
             fig.add_trace(go.Scatter(x=x_trace1, y=y_trace1, mode='lines', line=dict(color=colors[idx]), name=label))
 
+            fig.add_trace(go.Scatter(
+            x=[x_trace1[0]], 
+            y=[y_trace1[0]], 
+            mode='markers', 
+            marker=dict(size=8, color='green'), 
+            name=f"Start {label}",
+            showlegend=False
+            ))
+            
+            fig.add_trace(go.Scatter(
+                x=[x_trace1[-1]], 
+                y=[y_trace1[-1]], 
+                mode='markers', 
+                marker=dict(size=8, color='red'),  
+                name=f"End {label}",
+                showlegend=False 
+            ))
+
         title = f"{game.get_game_name()} | {learning_name.replace('_', ' ')}\n"
         title += f" | alpha={alpha}, gamma={gamma}, tau={tau}"
 
