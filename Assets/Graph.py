@@ -51,7 +51,7 @@ class Graph:
         for i in range(dim):
             for j in range(dim):
                 if not np.isclose(vector[j], 0):
-                    result[i] += matrix[i,j]*vector[j] *(np.sum(vector[matrix[i,:] <= matrix[i,j]]**kappa) - np.sum(vector[matrix[i,:] < matrix[i,j]])**kappa) / np.sum(vector[matrix[i,:] == matrix[i,j]])
+                    result[i] += matrix[i,j]*vector[j] *(np.sum(vector[matrix[i,:] <= matrix[i,j]])**kappa - np.sum(vector[matrix[i,:] < matrix[i,j]])**kappa) / np.sum(vector[matrix[i,:] == matrix[i,j]])
         return result
 
     @staticmethod
@@ -101,7 +101,7 @@ class Graph:
                 dy[j,i] = tmp_y
 
         fig = ff.create_quiver(x,y,dx, dy,
-                                name=f"Vector plot \n  alpha={alpha}, tau={tau}, kappa={kappa}",
+                                name=f"Vector plot",
                                 line_width = 1,
                                 scale= .025,
                                 arrow_scale=0.2
@@ -230,7 +230,7 @@ class Graph:
             x_trace1 = np.array([freq0[0] for freq0 in traces[0]])
             y_trace1 = np.array([freq0[0] for freq0 in traces[1]])
 
-            label = f"Trace {idx+1}: P1={initial_Q_values_list[idx][0]}, P2={initial_Q_values_list[idx][1]}"
+            label = f"Trace {idx+1}: P1={x_trace1[0]:.2f}, P2={y_trace1[0]:.2f}"
             fig.add_trace(go.Scatter(x=x_trace1, y=y_trace1, mode='lines', line=dict(color=colors[idx]), name=label))
 
             fig.add_trace(go.Scatter(
@@ -252,12 +252,59 @@ class Graph:
             ))
 
         title = f"{game.get_game_name()} | {learning_name.replace('_', ' ')}\n"
-        title += f" | alpha={alpha}, gamma={gamma}, tau={tau}"
+        title += f"| alpha={alpha}, gamma={gamma}, tau={tau}, kappa={kappa}"
 
         fig.update_layout(title=title,
-                        xaxis_title='Player 1 Action S1 Probability',
-                        yaxis_title='Player 2 Action S1 Probability',
-                        legend_title='Traces')
+                        xaxis_title='Player 1 Action 0 Probability',
+                        yaxis_title='Player 2 Action 0 Probability',
+                        legend_title='Traces',
+                        xaxis=dict(range=[0, 1]),  # Set X axis range between 0 and 1
+                        yaxis=dict(range=[0, 1]))   # Set Y axis range between 0 and 1)
+
+        # Show the plot
+        fig.show()
+
+    @staticmethod
+    def render_combined_2_actions_graph_FAQ(game: Game, all_traces: list[list[list[list]]], initial_Q, alpha, gamma, tau, learning_names, kappa = 1, normalise: bool = True):
+        # kappa = 1 -> Q learning
+        fig = Graph.compute_vector_field(game, alpha, tau , kappa=kappa)
+
+        colors = ['red', 'blue', 'green', 'yellow']
+
+        for idx, traces in enumerate(all_traces):
+            x_trace1 = np.array([freq0[0] for freq0 in traces[0]])
+            y_trace1 = np.array([freq0[0] for freq0 in traces[1]])
+
+            label = f"Trace {idx+1}: P1={x_trace1[0]:.2f}, P2={y_trace1[0]:.2f}"
+            fig.add_trace(go.Scatter(x=x_trace1, y=y_trace1, mode='lines', line=dict(color=colors[idx]), name=label))
+
+            fig.add_trace(go.Scatter(
+            x=[x_trace1[0]], 
+            y=[y_trace1[0]], 
+            mode='markers', 
+            marker=dict(size=8, color='green'), 
+            name=f"Start {label}",
+            showlegend=False
+            ))
+            
+            fig.add_trace(go.Scatter(
+                x=[x_trace1[-1]], 
+                y=[y_trace1[-1]], 
+                mode='markers', 
+                marker=dict(size=8, color='red'),  
+                name=f"End {label}",
+                showlegend=False 
+            ))
+
+        title = f"{game.get_game_name()} | {learning_names[0].replace('_', ' ')} | {learning_names[1].replace('_', ' ')}\n"
+        title += f"| alpha={alpha}, gamma={gamma}, tau={tau}, kappa={kappa}"
+
+        fig.update_layout(title=title,
+                        xaxis_title='Player 1 Action 0 Probability',
+                        yaxis_title='Player 2 Action 0 Probability',
+                        legend_title='Traces',
+                        xaxis=dict(range=[0, 1]),  # Set X axis range between 0 and 1
+                        yaxis=dict(range=[0, 1]))   # Set Y axis range between 0 and 1)
 
         # Show the plot
         fig.show()

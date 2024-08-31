@@ -155,7 +155,7 @@ class Agent():
 
   def __frequency_adjusted_Q_learning(self, reward) -> None:
     assert(self.__index_latest_action >= 0)
-    self.__Q[self.__index_latest_action] = self.__Q[self.__index_latest_action] + min(self.__beta/self.__previous_distributions[-1][self.__index_latest_action],1) * self.__alpha * (reward + self.__gamma * max(self.__Q) - self.__Q[self.__index_latest_action])
+    self.__Q[self.__index_latest_action] = self.__Q[self.__index_latest_action] + min(self.__beta/self.__previous_distributions[-1][self.__index_latest_action],1)* self.__alpha * (reward + self.__gamma * max(self.__Q) - self.__Q[self.__index_latest_action])
     #policy updating
     distribution = deepcopy(self.__previous_distributions[-1])
     for prob_index in range(len(self.__previous_distributions[-1])):
